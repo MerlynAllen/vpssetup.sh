@@ -60,7 +60,6 @@ while true ; do
     passwd $USERNAME
     if [ $? -eq 0 ]; then
         break
-    fi
     else
         echo "Password not match, please try again."
     fi
