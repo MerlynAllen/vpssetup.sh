@@ -56,8 +56,6 @@ useradd -m $USERNAME
 while true ; do
     echo "Please enter a password for $USERNAME:"
     passwd $USERNAME
-    echo "Re-enter password for $USERNAME:"
-    passwd $USERNAME
     if [ $? -eq 0 ]; then
         break
     else
