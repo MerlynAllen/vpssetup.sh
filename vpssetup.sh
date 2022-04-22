@@ -26,8 +26,11 @@ deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-security main restricted 
 EOF
 		;;
 	(*)
+        echo Skip.
+        ;;
 	(N|n)
 		echo Canceled.
+        ;;
 esac
 apt update && apt upgrade
 clear
