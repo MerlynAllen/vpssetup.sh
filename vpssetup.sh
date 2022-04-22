@@ -44,7 +44,8 @@ apt install \
     socat \
     wget \
     curl \
-
+    nginx \
+    git
 
 
 #Unable ufw teporarily.
@@ -209,7 +210,7 @@ echo Now you can access this instance with user $USERNAME from port 22222.
 # Now setting up working environments.
 curl -L git.io/antigen > antigen.zsh
 cat << EOF > $HOMEPATH/.zshrc
-source $HOME/antigen.zsh
+source \$HOME/antigen.zsh
 # Load the oh-my-zsh's library.
 antigen use oh-my-zsh
 
@@ -232,6 +233,7 @@ antigen theme romkatv/powerlevel10k
 # Tell Antigen that you're done.
 antigen apply
 EOF
+chsh -s /bin/zsh $USERNAME
 echo "alias vi=vim" >> $HOMEPATH/.zshrc
 echo "alias vim=nvim" >> $HOMEPATH/.zshrc
 ln -s /usr/bin/nvim /usr/bin/vim
@@ -239,12 +241,101 @@ ln -s /usr/bin/nvim /usr/bin/vi
 # Install v2ray
 bash <(curl -L https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-release.sh)
 
+cat << EOF > /usr/local/etc/v2ray/config.json
+{
+  "log": {
+    "loglevel": "warning",
+    "access": "/var/log/v2ray/access.log",
+    "error": "/var/log/v2ray/error.log"
+   },
+  "inbounds": [{
+    "port": 12345,
+    "protocol": "vmess",
+    "settings": {
+      "clients": [
+        {
+          "id": "`uuidgen`",
+          "level": 1,
+          "alterId": 0
+        }
+      ]
+    },
+    "streamSettings": {     
+        "network": "ws",
+        "wsSettings": {
+          "path": "/webcamstream"
+        }
+      },
+    "listen": "127.0.0.1"
+  }],
+  "outbounds": [{
+    "protocol": "freedom",
+    "settings": {}
+  },{
+    "protocol": "blackhole",
+    "settings": {},
+    "tag": "blocked"
+  }],
+  "routing": {
+    "rules": [
+      {
+        "type": "field",
+        "ip": ["geoip:private"],
+        "outboundTag": "blocked"
+      }
+    ]
+  }
+}
+EOF
+cat << EOF > /etc/nginx/conf.d/v2ray.conf
+server {
+    listen 80;
+    server_name s1.merlyn.cc; 
+    rewrite ^(.*) https://\$server_name\$1 permanent;
+}
+
+server {
+    listen       443 ssl http2;
+    server_name s1.merlyn.cc;
+    charset utf-8;
+
+    ssl_protocols TLSv1.2 TLSv1.3; 
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers off;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 1d;
+    ssl_session_tickets off;
+    ssl_certificate /home/merlyn/v2ray/cert.crt; 
+    ssl_certificate_key /home/merlyn/v2ray/cert.key; 
+
+    access_log  /var/log/nginx/merlyn.access.log;
+    error_log /var/log/nginx/merlyn.error.log;
+
+    root /usr/share/nginx/html;
+    location / {
+        index  index.html;
+    }
+    location /webcamstream {
+        proxy_redirect off;
+        proxy_pass http://127.0.0.1:12345;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+    }
+}
+EOF
+mkdir -p $HOMEPATH/v2ray/
+openssl req -x509 -newkey rsa  -keyout $HOMEPATH/v2ray/cert.crt -pubkey -out $HOMEPATH/v2ray/cert.key -nodes -days 365
+systemctl enable v2ray
+systemctl enable nginx
 # Install zerotier
 curl -s https://install.zerotier.com | sudo bash
 
 
 # Install wireguard?
-
 
 
 
