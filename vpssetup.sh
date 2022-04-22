@@ -6,7 +6,7 @@ HOMEPATH=/home/$USERNAME
 #Preparation of apt
 read -n 1 -p "Change sources.list to mirrors.tuna.tsinghua.edu.cn?[y/N]" tf
 case $tf in 
-    (Y|y)
+    Y|y)
         echo Replace default source to tuna.
         mv /etc/apt/sources.list /etc/apt/sources.list.default
         cat << EOF > /etc/apt/sources.list
@@ -25,10 +25,10 @@ deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-security main restricted 
 # deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-proposed main restricted universe multiverse
 EOF
         ;;
-    (*)
+    *)
         echo Skip.
         ;;
-    (N|n)
+    N|n)
         echo Canceled.
         ;;
 esac
@@ -53,14 +53,14 @@ clear
 echo Setting up accounts.
 # First setup new account `merlyn`.
 useradd -m $USERNAME 
-FAIL=1
-while [ $FAIL -ne 0 ]; do
+while true ; do
     echo "Please enter a password for $USERNAME:"
     passwd $USERNAME
     echo "Re-enter password for $USERNAME:"
     passwd $USERNAME
     if [ $? -eq 0 ]; then
-        FAIL=0
+        break
+    fi
     else
         echo "Password not match, please try again."
     fi
