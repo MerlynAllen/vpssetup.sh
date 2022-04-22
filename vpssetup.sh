@@ -50,6 +50,19 @@ clear
 echo Setting up accounts.
 # First setup new account `merlyn`.
 useradd -m $USERNAME 
+FAIL=1
+while [ $FAIL -ne 0 ]; do
+    echo "Please enter a password for $USERNAME:"
+    passwd $USERNAME
+    echo "Re-enter password for $USERNAME:"
+    passwd $USERNAME
+    if [ $? -eq 0 ]; then
+        FAIL=0
+    else
+        echo "Password not match, please try again."
+    fi
+done
+
 # Add to sudoers
 usermod -aG sudo $USERNAME
 echo Editting sshd settings.
