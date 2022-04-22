@@ -6,10 +6,10 @@ HOMEPATH=/home/$USERNAME
 #Preparation of apt
 read -n 1 -p "Change sources.list to mirrors.tuna.tsinghua.edu.cn?[y/N]" tf
 case $tf in 
-	(Y|y)
-		echo Replace default source to tuna.
-		mv /etc/apt/sources.list /etc/apt/sources.list.default
-		cat << EOF > /etc/apt/sources.list
+    (Y|y)
+        echo Replace default source to tuna.
+        mv /etc/apt/sources.list /etc/apt/sources.list.default
+        cat << EOF > /etc/apt/sources.list
 # 默认注释了源码镜像以提高 apt update 速度，如有需要可自行取消注释
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal main restricted universe multiverse
 # deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal main restricted universe multiverse
@@ -24,26 +24,26 @@ deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-security main restricted 
 # deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-proposed main restricted universe multiverse
 # deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-proposed main restricted universe multiverse
 EOF
-		;;
-	(*)
+        ;;
+    (*)
         echo Skip.
         ;;
-	(N|n)
-		echo Canceled.
+    (N|n)
+        echo Canceled.
         ;;
 esac
 apt update && apt upgrade
 clear
 echo Installing prequsites.
 apt install \
-	python3 \
-	sudo \
-	zsh \
-	nvim \
-	vim \
-	socat \
-	wget \
-	curl \
+    python3 \
+    sudo \
+    zsh \
+    nvim \
+    vim \
+    socat \
+    wget \
+    curl \
 
 
 
@@ -110,7 +110,7 @@ PermitRootLogin yes
 PubkeyAuthentication yes
 
 # Expect .ssh/authorized_keys2 to be disregarded by default in future.
-#AuthorizedKeysFile	.ssh/authorized_keys .ssh/authorized_keys2
+#AuthorizedKeysFile    .ssh/authorized_keys .ssh/authorized_keys2
 
 #AuthorizedPrincipalsFile none
 
@@ -184,26 +184,26 @@ TCPKeepAlive yes
 AcceptEnv LANG LC_*
 
 # override default of no subsystems
-Subsystem	sftp	/usr/lib/openssh/sftp-server
+Subsystem    sftp    /usr/lib/openssh/sftp-server
 
 # Example of overriding settings on a per-user basis
 #Match User anoncvs
-#	X11Forwarding no
-#	AllowTcpForwarding no
-#	PermitTTY no
-#	ForceCommand cvs server
+#    X11Forwarding no
+#    AllowTcpForwarding no
+#    PermitTTY no
+#    ForceCommand cvs server
 EOF
 echo Now importing ssh pubkey from github...
 mkdir -p $HOMEPATH/.ssh
 wget -O- --tries=5 https://github.com/MerlynAllen.keys >> $HOMEPATH/.ssh/authorized_keys
 if [ $? -ne 0 ]; then
-	echo Failed to import from GitHub. Now socat is listening on port 23456. Use socat to import key.
-	socat tcp-listen:23456 - | tee -a $HOMEPATH/.ssh/authorized_keys
-	if [ $? -ne 0 ]; then
-		echo Error! Please continue manually!
-		exit 1
-	fi
-	echo Successfully imported!
+    echo Failed to import from GitHub. Now socat is listening on port 23456. Use socat to import key.
+    socat tcp-listen:23456 - | tee -a $HOMEPATH/.ssh/authorized_keys
+    if [ $? -ne 0 ]; then
+        echo Error! Please continue manually!
+        exit 1
+    fi
+    echo Successfully imported!
 fi
 echo Successfully imported from GitHub!
 cat $HOMEPATH/.ssh/authorized_keys
