@@ -329,8 +329,8 @@ server {
 EOF
 mkdir -p $HOMEPATH/v2ray/
 openssl req -x509 -newkey rsa  -keyout $HOMEPATH/v2ray/cert.crt -pubkey -out $HOMEPATH/v2ray/cert.key -nodes -days 365
-systemctl enable v2ray
-systemctl enable nginx
+systemctl enable --now v2ray
+systemctl enable --now nginx
 # Install zerotier
 curl -s https://install.zerotier.com | sudo bash
 
