@@ -4,7 +4,7 @@ USERNAME=merlyn
 HOMEPATH=/home/$USERNAME
 
 #Preparation of apt
-read -n 1 "Change sources.list to mirrors.tuna.tsinghua.edu.cn?[y/N]" tf
+read -n 1 -p "Change sources.list to mirrors.tuna.tsinghua.edu.cn?[y/N]" tf
 case $tf in 
 	Y|y)
 		echo Replace default source to tuna.
