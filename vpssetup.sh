@@ -6,7 +6,7 @@ HOMEPATH=/home/$USERNAME
 #Preparation of apt
 read -n 1 "Change sources.list to mirrors.tuna.tsinghua.edu.cn?[y/N]" tf
 case $tf in 
-	(Y|y)
+	Y|y)
 		echo Replace default source to tuna.
 		mv /etc/apt/sources.list /etc/apt/sources.list.default
 		cat << EOF > /etc/apt/sources.list
@@ -25,8 +25,8 @@ deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-security main restricted 
 # deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-proposed main restricted universe multiverse
 EOF
 		;;
-	(*)
-	(N|n)
+	*)
+	N|n)
 		echo Canceled.
 esac
 apt update && apt upgrade
