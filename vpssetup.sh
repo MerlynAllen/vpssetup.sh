@@ -221,7 +221,16 @@ antigen apply
 EOF
 echo "alias vi=vim" >> $HOMEPATH/.zshrc
 echo "alias vim=nvim" >> $HOMEPATH/.zshrc
+ln -s /usr/bin/nvim /usr/bin/vim
+ln -s /usr/bin/nvim /usr/bin/vi
+# Install v2ray
+bash <(curl -L https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-release.sh)
 
+# Install zerotier
+curl -s https://install.zerotier.com | sudo bash
+
+
+# Install wireguard?
 
 
 
